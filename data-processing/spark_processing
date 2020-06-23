@@ -27,11 +27,12 @@ spark = SparkSession.builder.appName('InhabitProject'
 sc = spark.sparkContext
 sc.setLogLevel('WARN')
 
+
 # postgreSQL parameters
 
 pg_usr = os.getenv('PGSQL_USER')
 pg_pw = os.getenv('PGSQL_PW')
-url = 'jdbc:postgresql://10.0.0.9:5430/inhabit_db'
+url = os.getenv('URL')
 
 
 # function to define AQ dataset Schema
@@ -191,7 +192,6 @@ def append_table(
     user_name,
     password,
     ):
-
     df.write.format('jdbc').mode('append').option('url',
             url).option('dbtable', dbtable).option('user',
             user_name).option('password', password).option('driver',
@@ -266,15 +266,10 @@ for current_year in years:
     # write air pollution data to database
 
     start = time.time()
-    unique_params = df_airagg.select('parameter'
-            ).distinct().rdd.flatMap(lambda x: x).collect()
-
-    for param_idx in range(len(unique_params)):
-        df_param = df_airagg.where(df_airagg['parameter']
-                                   == unique_params[param_idx])
-        append_table(df_param, url, unique_params[param_idx], pg_usr,
+    
+    append_table(df_airagg, url, 'airpollution_table', pg_usr,
                      pg_pw)
-
+    
     dur = time.time() - start
     print ('OpenAQ writing data takes in sec: ' + str(dur))
 
@@ -317,27 +312,31 @@ for current_year in years:
     # writing Noaa data to data base
 
     start = time.time()
+    
+    # Change data format
+    df_noaa = df_noaa.withColumn('mapCol', \
+                               create_map(lit('AirTempDailyAvg'),df_noaa.AirTempDailyAvg,
+                                          lit('TotalDailyPrecip'),df_noaa.TotalDailyPrecip,
+                                          lit('SolarRadiationDaily'),df_noaa.SolarRadiationDaily,
+                                          lit('SurfaceTempDailyAvg'),df_noaa.SurfaceTempDailyAvg,
+                                          lit('RHDailyAvg'),df_noaa.RHDailyAvg,
+                                          lit('SoilMoist5cm'),df_noaa.SoilMoist5cm,
+                                          lit('SoilMoist20cm'),df_noaa.SoilMoist20cm,
+                                          lit('SoilMoist50cm'),df_noaa.SoilMoist50cm,
+                                          lit('SoilTemp5cm'),df_noaa.SoilTemp5cm,
+                                          lit('SoilTemp20cm'),df_noaa.SoilTemp20cm,
+                                          lit('SoilTemp100cm'),df_noaa.SoilTemp100cm
+                                         )
+                        )
 
-    noaadb_params = [
-        'AirTempDailyAvg',
-        'TotalDailyPrecip',
-        'SolarRadiationDaily',
-        'SurfaceTempDailyAvg',
-        'RHDailyAvg',
-        'SoilMoist5cm',
-        'SoilMoist20cm',
-        'SoilMoist50cm',
-        'SoilTemp5cm',
-        'SoilTemp20cm',
-        'SoilTemp100cm',
-        ]
-
-    for w_param in noaadb_params:
-        df_sel = df_noaa.select('Date', 'latitude', 'longitude',
-                                w_param)
-        df_sel = default_filter(df_sel, w_param)
-
-        append_table(df_sel, url, w_param, pg_usr, pg_pw)
-
+    df_noaaagg = df_noaa.select('*',explode(df_noaa.mapCol).alias('FieldName','Fieldvalue'))
+    columns_to_drop =['AirTempDailyAvg','TotalDailyPrecip','SurfaceTempDailyAvg','mapCol','SolarRadiationDaily','RHDailyAvg',\
+             'SoilMoist5cm','SoilMoist20cm','SoilMoist50cm','SoilTemp5cm','SoilTemp20cm','SoilTemp100cm']
+    df_noaaagg =df_noaaagg.drop(*columns_to_drop)
+    
+    df_noaaagg = default_filter(df_noaaagg,'Fieldvalue')
+    
+    append_table(df_noaaagg, url, 'Noaa_table', pg_usr, pg_pw)
+    
     dur = time.time() - start
     print ('Noaa writing data takes in sec: ' + str(dur))

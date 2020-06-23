@@ -1,0 +1,27 @@
+root
+ |-- attribution: array (nullable = true)
+ |    |-- element: struct (containsNull = true)
+ |    |    |-- name: string (nullable = true)
+ |    |    |-- url: string (nullable = true)
+ |-- averagingPeriod: struct (nullable = true)
+ |    |-- unit: string (nullable = true)
+ |    |-- value: double (nullable = true)
+ |-- city: string (nullable = true)
+ |-- coordinates: struct (nullable = true)
+ |    |-- latitude: double (nullable = true)
+ |    |-- longitude: double (nullable = true)
+ |-- country: string (nullable = true)
+ |-- date: struct (nullable = true)
+ |    |-- local: string (nullable = true)
+ |    |-- utc: string (nullable = true)
+ |-- location: string (nullable = true)
+ |-- mobile: boolean (nullable = true)
+ |-- parameter: string (nullable = true)
+ |-- sourceName: string (nullable = true)
+ |-- sourceType: string (nullable = true)
+ |-- unit: string (nullable = true)
+ |-- value: double (nullable = true)
+
+
+
+
