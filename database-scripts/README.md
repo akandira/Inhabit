@@ -1,1 +1,1 @@
-This folder contains .SQL file to add spatial geography file and index it.
+This folder contains .SQL file to add spatial geography column and also commands to index it.

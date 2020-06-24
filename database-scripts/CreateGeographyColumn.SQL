@@ -5,4 +5,4 @@ SELECT AddGeometryColumn('db_table', 'geom', 4326, 'POINT', 2);
 UPDATE db_table SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326);
  
 /*create index to facilitate quick queries */
-CREATE INDEX idx ON inhabit_table (latitude,longitude,parameter);
+CREATE INDEX idx ON db_table (latitude,longitude,parameter);
