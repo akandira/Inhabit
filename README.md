@@ -1,4 +1,4 @@
-# INHABIT - make an informed move!
+ # INHABIT - make an informed move!
 ![image](https://user-images.githubusercontent.com/43352808/85424319-9fa80a80-b52c-11ea-9759-182d42f20a2c.png)
 ##  Motivation
 Around 40 million Americans move every year, which is roughly 14% of the population. When people move to a new place, they look for opportunities, healthy life, education, transportation. Increasingly people are also thinking about the environment, and they rightly do so because it impacts our life tremendously. The World Health Organization estimates around 4 million people die every year prematurely because of air pollution. Along these lines, weather has been linked to mental health.
@@ -8,7 +8,7 @@ The motivation of this app is to provide all the environment related trends, so 
 ### Datasets:
 The project uses two publicly available data sets, OpenAQ and NOAA weather data. The Open AQ data consists of air quality data from various sensors in the world. NOAA weather data contains information such as temperature, solar radiation, and soil information in the US. More details can be found in the data processing section. These data sets are >300 GB and are stored in Amazon S3 bucket.
 
-![DEtools](https://user-images.githubusercontent.com/43352808/85465309-7fdd0a80-b55d-11ea-9d52-d6e716b357a1.PNG)
+![DEtools_github](https://user-images.githubusercontent.com/43352808/86197055-71689300-bb09-11ea-9bb1-f1f399349370.PNG)
 ### Processing:
 The data is processed using Apache Spark. Apache Spark has been installed on an AWS EC2 cluster with one master instance (4 cores and 16 GB RAM) and three worker instances (4 vCPUS and 16 GB RAM). Faster processing, availability of resources to learn the software, and ease of using led to the selection of this tool.
 
@@ -25,7 +25,7 @@ The code is designed to read data from S3 bucket into a large data frame. The da
 * NOAA weather data schema of data is different from Open AQ data, transformation of data has been performed and then merged with AQ data.
 
 ### Optimizing the code:
-The code initially took 2 hours to run, some optimization techniques like providing the static schema for the datasets and expanding computation capability of spark cluster brought the processing time to under 6 mins.
+The code initially took 2 hours to read data, some optimization techniques like providing the static schema for the datasets and expanding computation capability of spark cluster brought the reading time to under 6 min.
 I am currently working on repartitioning techniques to see if any other optimizations are possible. I will post those details shortly.
 
 ### Storage: 
@@ -47,6 +47,10 @@ Distance to the nearest sensor in order to understand the limitations of the inf
 ![distance capture](https://user-images.githubusercontent.com/43352808/85492406-fa238400-b589-11ea-9833-e6964d491bbb.PNG)
 
 The overview map is being cached for getting faster loading. Exceptions have been placed to catch any incorrect ZIP codes.
+
+### Scheduler
+
+Air flow is used as scheduler to download data from openaq and NOAA sources on a daily basis and run spark job
 
 ## Next Steps:
 * Integrating with new data sources like water quality, hospitals, transportation etc. can make it a one-stop app to check all the factors.
