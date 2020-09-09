@@ -22,7 +22,7 @@ The code is designed to read data from S3 bucket into a large data frame. The da
 * OpenAQ data set comes from sources across the world hence the units for the same parameter are inconsistent depending on the source of sensor (For example, NO2 units for some sources can be ppm or Micrograms/m3).
 * The update values for the sensor varies depending on the sources. Some sensors are updated once a day and some of them are updated 4-5 times a day. 
 * OpenAQ has only PM related data in 2013 and 2014. From 2015, there is data related to all air quality parameters.
-* NOAA weather data schema of data is different from Open AQ data, transformation of data has been performed and then merged with AQ data.
+* NOAA weather data schema is different from Open AQ data, transformation of data has been performed and then merged with AQ data.
 
 ### Optimizing the code:
 The code initially took 2 hours to read data, some optimization techniques like providing the static schema for the datasets and expanding computation capability of spark cluster brought the reading time to under 6 min.
